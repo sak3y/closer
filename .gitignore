@@ -1,20 +1,21 @@
-# secrets
-.env
-
-# environment
+# Python
 .venv/
+venv/
 __pycache__/
+.pytest_cache/
 *.pyc
 
-# generated index (rebuild with index(rebuild=True))
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Local vector database
 chroma_db/
 
-# Docs
-docs/
+# Node
+node_modules/
+dist/
 
-# jupyter
-.ipynb_checkpoints/
-
-# editor / os
-.vscode/
+# Editor / OS
 .DS_Store

@@ -175,7 +175,7 @@ def ask(store, question, k=4):
         If at least one has been matches, then it passes
 """
 
-def evaluate(store, k=4, path="tests/test_full.json"):
+def evaluate(store, k=4, path="backend/tests/test_full.json"):
     # Runs every test question and counts how often the right section came back in the top k
     cases = json.load(open(path))
     hits_at_k = 0

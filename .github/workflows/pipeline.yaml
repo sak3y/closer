@@ -19,14 +19,14 @@ jobs:
 
     - name: setup python
       uses: actions/setup-python@v7
-        with:
+      with:
           python-version: "3.11"
 
-      - name: Check Python syntax
-        run: python -m compileall -q .
+    - name: Check Python syntax
+      run: python -m compileall -q .
 
-      - name: Build Docker image
-        run: docker build -t rag-project:ci .
+    - name: Build Docker image
+      run: docker build -t rag-project:ci .
 
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

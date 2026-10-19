@@ -1,0 +1,169 @@
+/* Global styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #f8fafc;
+    color: #0f172a;
+    line-height: 1.6;
+}
+
+/* Main container */
+main {
+    width: min(100% - 2rem, 900px);
+    margin: 4rem auto;
+    padding: 3rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+}
+
+/* Headings */
+h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    text-align: center;
+    color: #0f172a;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Paragraphs */
+p {
+    color: #64748b;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Input fields */
+input,
+textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Buttons */
+button {
+    padding: 13px 24px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Answer container */
+.response {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    main {
+        margin: 1.5rem auto;
+        padding: 1.5rem;
+    }
+
+    h1 {
+        letter-spacing: -0.5px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+
+header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+header p {
+    max-width: 550px;
+    margin: 0 auto;
+}
+
+.question-section {
+    margin-bottom: 2.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+#question {
+    margin-bottom: 1rem;
+}
+
+.answer-section h2 {
+    margin-bottom: 0.75rem;
+}
+
+.response {
+    min-height: 120px;
+    white-space: pre-wrap;
+}
+
+footer {
+    margin-top: 3rem;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1.5rem;
+}
+
+footer p {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 0;
+}

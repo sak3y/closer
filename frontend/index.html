@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>UK Legislation AI</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="index.js"></script>
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <h1>UK Legislation AI</h1>
+        <p>
+          Ask questions about UK legislation and explore relevant legal
+          information.
+        </p>
+      </header>
+
+      <section class="question-section">
+        <form id="question-form">
+          <label for="question"> Your question </label>
+
+          <textarea
+            id="question"
+            name="question"
+            placeholder="e.g. What does the Data Protection Act 2018 cover?"
+            required
+          ></textarea>
+
+          <button type="submit" id="submit-btn">Ask Question</button>
+        </form>
+      </section>
+
+      <section class="answer-section">
+        <h2>Response</h2>
+
+        <div id="response" class="response" aria-live="polite">
+          Your answer will appear here.
+        </div>
+      </section>
+
+      <footer>
+        <p>
+          AI-generated information. Verify important details against official UK
+          legislation.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>

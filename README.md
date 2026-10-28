@@ -2,6 +2,19 @@
 
 A retrieval augmented generation service over UK criminal law. Acts are fetched from the legislation.gov.uk API as XML, chunked along the law's own structural boundaries, embedded locally, and served over HTTP so an LLM answers from the statute with a citation rather than from memory.
 
+## Project layout
+
+```text
+backend/          Python API, RAG pipeline, requirements and Dockerfile
+  tests/          Retrieval evaluation questions
+frontend/         HTML, CSS and JavaScript
+compose.yaml      Runs the API and Ollama
+chroma_db/        Generated vector store (ignored by Git)
+.github/          GitHub Actions workflows
+```
+
+Run the commands below from the repository root.
+
 ## Architecture
 
 ```
@@ -16,7 +29,7 @@ legislation.gov.uk API  ->  XML parse  ->  one chunk per subsection
                            LLM answers from those only  ->  FastAPI
 ```
 
-Two modules. `rag.py` is the pipeline: fetch, chunk, embed, retrieve, generate. `api.py` is the HTTP layer and holds no pipeline logic.
+Two modules. `backend/rag.py` is the pipeline: fetch, chunk, embed, retrieve, generate. `backend/api.py` is the HTTP layer and holds no pipeline logic.
 
 **Corpus:** Theft Act 1968, Criminal Damage Act 1971, Misuse of Drugs Act 1971, Fraud Act 2006, Computer Misuse Act 1990. 568 subsections. Adding an Act is one line in `ACT_IDS`.
 
@@ -29,7 +42,7 @@ docker compose up -d
 
 docker compose exec ollama ollama pull nomic-embed-text
 docker compose exec ollama ollama pull llama3.2
-docker compose exec api python rag.py
+docker compose exec api python -m backend.rag
 ```
 
 The last three are one-time. Models and the vector index both live in named volumes, so restarts are instant and nothing is re-downloaded or re-embedded. The API is then on `localhost:8000`, with interactive docs at `/docs`.
@@ -38,18 +51,38 @@ The last three are one-time. Models and the vector index both live in named volu
 
 ```bash
 uv venv --python 3.12 && source .venv/bin/activate    # .venv\Scripts\Activate.ps1 on Windows
-uv pip install -r requirements.txt
+uv pip install -r backend/requirements.txt
 
 ollama pull nomic-embed-text
 ollama pull llama3.2
 
-python rag.py            # builds the index, then runs the eval
-uvicorn api:app --reload
+python -m backend.rag            # builds the index, then runs the eval
+uvicorn backend.api:app --reload
 ```
 
-Ollama must be running before anything else, and a fresh clone has no `chroma_db/`, so `python rag.py` is required before the API returns anything. Python is pinned to 3.12 because compiled packages ship prebuilt wheels for new interpreters months late, and pip otherwise falls back to compiling from source.
+Ollama must be running before anything else, and a fresh clone has no `chroma_db/`, so `python -m backend.rag` is required before the API returns anything. Python is pinned to 3.12 because compiled packages ship prebuilt wheels for new interpreters months late, and pip otherwise falls back to compiling from source.
 
 ## API
+
+### Basic frontend
+
+Open http://localhost:8000 after starting the API (with Docker Compose or
+`uvicorn backend.api:app --reload`). The API serves the frontend directly; no separate
+frontend server or build step is needed.
+
+You can also use Live Server on port 5500. The frontend sends API requests to
+port 8000 on the same host, and FastAPI allows requests from localhost or
+127.0.0.1 on port 5500. Keep FastAPI running in either setup.
+
+The frontend has three files: `frontend/index.html` defines the page,
+`frontend/styles.css` provides the dark and gold styling, and
+`frontend/index.js` handles form submission and displays the response.
+Submitting a question calls `/ask?query=...`. The backend embeds the question
+through Ollama, retrieves four passages from Chroma, and sends those passages
+with the question to the local model. The page displays its answer and sources.
+Ollama needs `nomic-embed-text` and `llama3.2` installed, and the vector store
+must be populated using `python -m backend.rag` before asking questions.
+There is no question history or saved frontend state.
 
 `/search` is retrieval only: no model call, no cost, fast. `/ask` adds generation and is rate limited.
 
@@ -91,7 +124,7 @@ Sources come back with every answer, each carrying the URI it was built from, so
 
 ## Retrieval quality
 
-Ten questions, each paired with the section that should answer it, scored on whether that section appears in the top k. The set lives in `tests/test.json` and runs with `evaluate(store)`.
+Ten questions, each paired with the section that should answer it, scored on whether that section appears in the top k. The set lives in `backend/tests/test_full.json` and runs with `evaluate(store)`.
 
 **Matches (K = 4) is 22/34 ** Questions are phrased in every day lanauage ("is hacking into a computer illegal", "is taking someone's car without permission a crime") rather than in statutory language, so the score reflects retrieval bridging plain English to legal drafting. 
 

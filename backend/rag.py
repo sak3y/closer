@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+from pathlib import Path
 import requests
 from xml.etree import ElementTree as ET
 
@@ -107,7 +108,7 @@ def get_store():
 
 def index(urls=ACT_URLS, rebuild=False):
     # Fetches every Act, turns them into chunks, embeds them, and saves them to the database
-    
+
     store = get_store()
 
     # rebuild vector store option
@@ -145,9 +146,7 @@ def get_llm():
     # Built on first use, not on import, so retrieval-only callers never load a model
     global _llm
     if _llm is None:
-       _llm = init_chat_model(LLM_MODEL, model_provider="ollama", base_url=OLLAMA_HOST)
-    else:
-        _llm = init_chat_model(LLM_MODEL, model_provider=LLM_PROVIDER)
+        _llm = init_chat_model(LLM_MODEL, model_provider="ollama", base_url=OLLAMA_HOST)
     return _llm
 
 
@@ -175,7 +174,7 @@ def ask(store, question, k=4):
         If at least one has been matches, then it passes
 """
 
-def evaluate(store, k=4, path="tests/test_full.json"):
+def evaluate(store, k=4, path=Path(__file__).parent / "tests" / "test_full.json"):
     # Runs every test question and counts how often the right section came back in the top k
     cases = json.load(open(path))
     hits_at_k = 0
@@ -195,4 +194,4 @@ if __name__ == "__main__":
     store = index(rebuild=False)
     evaluate(store)
 
-    
+

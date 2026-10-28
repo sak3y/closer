@@ -7,7 +7,9 @@ services:
       - "11434:11434"
 
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: backend/dockerfile
     ports:
       - "8000:8000"
     environment:

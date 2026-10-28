@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Closer | UK legislation</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="index.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <span class="brand">CLOSER</span>
+      <span>UK LEGISLATION COUNSEL</span>
+    </header>
+    <main>
+      <section>
+        <p class="label">LOCAL LEGAL RESEARCH</p>
+        <h1>A clearer view<br />of the law.</h1>
+        <p class="intro">
+          Ask a question. Find answers in UK legislation.
+        </p>
+        <form id="question-form">
+          <label for="question">YOUR QUESTION</label>
+          <textarea
+            id="question"
+            rows="3"
+            placeholder="What counts as burglary?"
+            required
+          ></textarea>
+          <button type="submit">Ask question &rarr;</button>
+        </form>
+        <p id="status" role="status">
+          Requires the API, Ollama and an indexed vector store.
+        </p>
+        <section aria-labelledby="finding-title">
+          <h2 id="finding-title">The finding</h2>
+          <p id="answer">Your answer will appear here.</p>
+        </section>
+        <p class="disclaimer">
+          AI-generated legal information, not legal advice. Check the original
+          legislation.
+        </p>
+      </section>
+      <aside aria-labelledby="sources-title">
+        <h2 id="sources-title">Authorities</h2>
+        <div id="sources">Retrieved passages will appear here.</div>
+      </aside>
+    </main>
+  </body>
+</html>

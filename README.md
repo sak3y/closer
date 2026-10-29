@@ -47,20 +47,23 @@ docker compose exec api python -m backend.rag
 
 The last three are one-time. Models and the vector index both live in named volumes, so restarts are instant and nothing is re-downloaded or re-embedded. The API is then on `localhost:8000`, with interactive docs at `/docs`.
 
-### Without Docker
+### Run Locally
 
 ```bash
-uv venv --python 3.12 && source .venv/bin/activate    # .venv\Scripts\Activate.ps1 on Windows
+uv venv --python 3.12 && source .venv/bin/activate                  # .venv\Scripts\Activate.ps1 on Windows
 uv pip install -r backend/requirements.txt
 
 ollama pull nomic-embed-text
 ollama pull llama3.2
 
-python -m backend.rag            # builds the index, then runs the eval
-uvicorn backend.api:app --reload
+python -m backend.rag                                               # builds the vector store
+python -m http.server 5500 --bind 127.0.0.1 --directory frontend    # runs web server
+uv run python -m uvicorn backend.api:app --reload                   # runs backend.rag server
 ```
 
-Ollama must be running before anything else, and a fresh clone has no `chroma_db/`, so `python -m backend.rag` is required before the API returns anything. Python is pinned to 3.12 because compiled packages ship prebuilt wheels for new interpreters months late, and pip otherwise falls back to compiling from source.
+Ollama must be running before anything else, and a fresh clone has no `chroma_db/`, so `python -m backend.rag` is required before the API returns anything. 
+
+Python is pinned to 3.12 because compiled packages ship prebuilt wheels for new interpreters months late, and pip otherwise falls back to compiling from source.
 
 
 ## Design decisions
@@ -79,11 +82,7 @@ Ollama must be running before anything else, and a fresh clone has no `chroma_db
 
 ## Retrieval quality
 
-Ten questions, each paired with the section that should answer it, scored on whether that section appears in the top k. The set lives in `backend/tests/test_full.json` and runs with `evaluate(store)`.
-
 **Matches (K = 4) is 22/34 ** Questions are phrased in every day lanauage ("is hacking into a computer illegal", "is taking someone's car without permission a crime") rather than in statutory language, so the score reflects retrieval bridging plain English to legal drafting. 
-
-Earlier corpus scored 10/10, with the failure traced to near-identical Schedule paragraphs crowding out the section that answered the question.
 
 
 ## Docker

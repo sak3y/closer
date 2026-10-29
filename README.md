@@ -62,51 +62,6 @@ uvicorn backend.api:app --reload
 
 Ollama must be running before anything else, and a fresh clone has no `chroma_db/`, so `python -m backend.rag` is required before the API returns anything. Python is pinned to 3.12 because compiled packages ship prebuilt wheels for new interpreters months late, and pip otherwise falls back to compiling from source.
 
-## API
-
-### Basic frontend
-
-Open http://localhost:8000 after starting the API (with Docker Compose or
-`uvicorn backend.api:app --reload`). The API serves the frontend directly; no separate
-frontend server or build step is needed.
-
-You can also use Live Server on port 5500. The frontend sends API requests to
-port 8000 on the same host, and FastAPI allows requests from localhost or
-127.0.0.1 on port 5500. Keep FastAPI running in either setup.
-
-The frontend has three files: `frontend/index.html` defines the page,
-`frontend/styles.css` provides the dark and gold styling, and
-`frontend/index.js` handles form submission and displays the response.
-Submitting a question calls `/ask?query=...`. The backend embeds the question
-through Ollama, retrieves four passages from Chroma, and sends those passages
-with the question to the local model. The page displays its answer and sources.
-Ollama needs `nomic-embed-text` and `llama3.2` installed, and the vector store
-must be populated using `python -m backend.rag` before asking questions.
-There is no question history or saved frontend state.
-
-`/search` is retrieval only: no model call, no cost, fast. `/ask` adds generation and is rate limited.
-
-```bash
-curl "localhost:8000/ask?query=what+is+burglary"
-```
-
-```json
-{
-  "query": "what is burglary",
-  "answer": "According to Section 9(1), a person is guilty of burglary if he enters
-             any building or part of a building as a trespasser with intent to commit
-             an offence mentioned in subsection (2).",
-  "sources": [
-    {
-      "text": "Section 9(1): A person is guilty of burglary if— he enters any building...",
-      "uri": "http://www.legislation.gov.uk/ukpga/1968/60/section/9/1",
-      "score": 0.603
-    }
-  ]
-}
-```
-
-Sources come back with every answer, each carrying the URI it was built from, so any claim can be checked against legislation.gov.uk rather than taken on trust. `/health` reports the chunk count, which is how a missing or empty index announces itself instead of silently returning nothing.
 
 ## Design decisions
 
@@ -130,13 +85,6 @@ Ten questions, each paired with the section that should answer it, scored on whe
 
 Earlier corpus scored 10/10, with the failure traced to near-identical Schedule paragraphs crowding out the section that answered the question.
 
-## Tests
-
-Six pytest cases run against a sample Act declared inline in the test file, so they need no network, no Ollama and no external files. One per input class: a plain subsection, one with nested lettered points, a section number hidden behind commentary tags, text quoted from another Act, a Schedule paragraph, and a shape check across every chunk asserting each has a unique ID and text behind its citation. Each pins a bug that actually occurred, which is the whole reason they exist.
-
-```bash
-python -m pytest -v
-```
 
 ## Docker
 
